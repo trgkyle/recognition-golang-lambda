@@ -147,7 +147,7 @@
                   "Action": [
                     "s3:GetObject"
                   ],
-                  "Resource": "arn:aws:s3:::face-recognition-bbeetech/*"
+                  "Resource": "arn:aws:s3:::transaction-bbeetech/*"
                 },
                 {
                   "Effect": "Allow",
@@ -186,7 +186,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-search-face/v1/1703180408115-2023-12-21T17:40:08.115Z/face-recognition-search-face.zip"
+          "S3Key": "serverless/face-recognition-search-face/v1/1703181256548-2023-12-21T17:54:16.548Z/face-recognition-search-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
@@ -214,10 +214,10 @@
         "CodeSha256": "6gcQeYG38pep4Pgn2dHdpOSiVPBqQQPmpUOW0dXhnU8="
       }
     },
-    "S3BucketFacerecognitionbbeetech": {
+    "S3BucketTransactionbbeetech": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": "face-recognition-bbeetech",
+        "BucketName": "transaction-bbeetech",
         "NotificationConfiguration": {
           "LambdaConfigurations": [
             {
@@ -227,26 +227,16 @@
                   "MainLambdaFunction",
                   "Arn"
                 ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "transactions/"
-                    }
-                  ]
-                }
               }
             }
           ]
         }
       },
       "DependsOn": [
-        "MainLambdaPermissionFacerecognitionbbeetechS3"
+        "MainLambdaPermissionTransactionbbeetechS3"
       ]
     },
-    "MainLambdaPermissionFacerecognitionbbeetechS3": {
+    "MainLambdaPermissionTransactionbbeetechS3": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
@@ -265,7 +255,7 @@
               {
                 "Ref": "AWS::Partition"
               },
-              ":s3:::face-recognition-bbeetech"
+              ":s3:::transaction-bbeetech"
             ]
           ]
         },

@@ -15,7 +15,7 @@ provider:
         - Effect: Allow
           Action:
             - s3:GetObject
-          Resource: "arn:aws:s3:::facerecognition-bbeetech/*"
+          Resource: "arn:aws:s3:::face-recognition-bbeetech/*"
         - Effect: Allow
           Action:
             - dynamodb:PutItem
@@ -33,7 +33,7 @@ functions:
     handler: bin/main
     events:
       - s3:
-          bucket: facerecognition-bbeetech
+          bucket: face-recognition-bbeetech
           event: s3:ObjectCreated:*
           rules:
             - prefix: authenticated/
