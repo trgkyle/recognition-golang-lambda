@@ -11,3 +11,7 @@
 ```
     npm run deploy
 ```
+
+aws rekognition create-collection --collection-id customers --region ap-southeast-1
+
+

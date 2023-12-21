@@ -15,7 +15,7 @@
             {
               "Effect": "Allow",
               "Action": [
-                "rekognition:DetectFaces"
+                "rekognition:IndexFaces"
               ],
               "Resource": "*"
             },
@@ -25,6 +25,16 @@
                 "s3:GetObject"
               ],
               "Resource": "arn:aws:s3:::face-recognition-authenticated/*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:PutItem"
+              ],
+              "Resource": [
+                "arn:aws:dynamodb:ap-southeast-1:*:table/face-recognition-authenticated*",
+                "arn:aws:dynamodb:ap-southeast-1:*:table/face-recognition-authenticated*/index/*"
+              ]
             }
           ]
         }
@@ -172,6 +182,9 @@
                       },
                       {
                         "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][1]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][2]"
                       }
                     ]
                   }
@@ -200,7 +213,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/face-recognition/v1/1703170887718-2023-12-21T15:01:27.718Z/face-recognition.zip"
+                "S3Key": "serverless/face-recognition/v1/1703176119813-2023-12-21T16:28:39.813Z/face-recognition.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
@@ -218,14 +231,14 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersionHZbZYE3QKJBMtL4KLBkCfTfAzWo7TE3YZMUhdbg8": {
+          "MainLambdaVersionKhEb5lNoDQeOI1aDeNzdH54FHjzHHvw2wbY90Ikw5c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "MainLambdaFunction"
               },
-              "CodeSha256": "dJx91DEn1VSyGoTk0snBuPAVtsxzV04EA6K/5+V47AU="
+              "CodeSha256": "AUwpZd7MI6XhUu9yFGJE/N63nun4vmxqq/fJzbm/fMY="
             }
           },
           "S3BucketFacerecognitionauthenticated": {
@@ -291,7 +304,7 @@
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersionHZbZYE3QKJBMtL4KLBkCfTfAzWo7TE3YZMUhdbg8"
+              "Ref": "MainLambdaVersionKhEb5lNoDQeOI1aDeNzdH54FHjzHHvw2wbY90Ikw5c"
             },
             "Export": {
               "Name": "sls-face-recognition-v1-MainLambdaFunctionQualifiedArn"
@@ -401,7 +414,7 @@
         "timeout": 6,
         "runtime": "go1.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersionHZbZYE3QKJBMtL4KLBkCfTfAzWo7TE3YZMUhdbg8"
+        "versionLogicalId": "MainLambdaVersionKhEb5lNoDQeOI1aDeNzdH54FHjzHHvw2wbY90Ikw5c"
       }
     },
     "configValidationMode": "warn",
@@ -420,7 +433,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/face-recognition/v1/code-artifacts",
         "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/.serverless/face-recognition.zip",
-        "artifactDirectoryName": "serverless/face-recognition/v1/1703170887718-2023-12-21T15:01:27.718Z"
+        "artifactDirectoryName": "serverless/face-recognition/v1/1703176119813-2023-12-21T16:28:39.813Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -431,7 +444,7 @@
     "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/.serverless/face-recognition.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/face-recognition/v1/1703170887718-2023-12-21T15:01:27.718Z",
+    "artifactDirectoryName": "serverless/face-recognition/v1/1703176119813-2023-12-21T16:28:39.813Z",
     "artifact": "face-recognition.zip"
   }
 }

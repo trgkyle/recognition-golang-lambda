@@ -2,13 +2,15 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/rekognition"
 )
 
@@ -22,14 +24,15 @@ func handler(ctx context.Context, s3Event events.S3Event) {
 		bucket := s3.Bucket.Name
 
 		// Perform facial recognition using AWS Rekognition
-		detectFaces(sess, bucket, key)
+		addFaces(sess, bucket, key)
 	}
 }
 
-func detectFaces(sess *session.Session, bucket, key string) {
+func addFaces(sess *session.Session, bucket, key string) {
 	svc := rekognition.New(sess)
 
-	input := &rekognition.DetectFacesInput{
+	input := &rekognition.IndexFacesInput{
+		CollectionId: aws.String("customers"),
 		Image: &rekognition.Image{
 			S3Object: &rekognition.S3Object{
 				Bucket: aws.String(bucket),
@@ -38,15 +41,50 @@ func detectFaces(sess *session.Session, bucket, key string) {
 		},
 	}
 
-	result, err := svc.DetectFaces(input)
+	result, err := svc.IndexFaces(input)
 	if err != nil {
-		log.Printf("Error detecting faces: %v", err)
+		log.Printf("Error index faces:>> %v", err)
 		return
 	}
 
-	// Process the result (e.g., print facial details)
-	for _, faceDetail := range result.FaceDetails {
-		fmt.Printf("Detected face: %+v\n", faceDetail)
+	addFacesToDynamoDB(sess, result.FaceRecords, key)
+}
+
+func addFacesToDynamoDB(sess *session.Session, faceDetails []*rekognition.FaceRecord, key string) {
+	dbSvc := dynamodb.New(sess)
+
+	fileName := strings.TrimSuffix(key, filepath.Ext(key))
+	parts := strings.Split(fileName, "_")
+
+	if len(parts) < 2 {
+		log.Printf("Error file format :>> %v", fileName)
+		return
+	}
+	organizationId := parts[0]
+	customerId := parts[1]
+
+	// Modify this part based on your DynamoDB schema
+	for _, faceDetail := range faceDetails {
+		input := &dynamodb.PutItemInput{
+			Item: map[string]*dynamodb.AttributeValue{
+				"faceId": {
+					S: aws.String(*faceDetail.Face.FaceId),
+				},
+				"organizationId": {
+					S: aws.String(organizationId),
+				},
+				"customerId": {
+					S: aws.String(customerId),
+				},
+			},
+			TableName: aws.String("face-recognition-authenticated"),
+		}
+
+		_, err := dbSvc.PutItem(input)
+		if err != nil {
+			log.Printf("Error put to DynamoDB :>> %v", err)
+			return
+		}
 	}
 }
 

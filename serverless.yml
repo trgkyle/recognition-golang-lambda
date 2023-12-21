@@ -10,13 +10,18 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - rekognition:DetectFaces
+            - rekognition:IndexFaces
           Resource: "*"
         - Effect: Allow
           Action:
             - s3:GetObject
           Resource: "arn:aws:s3:::face-recognition-authenticated/*"
-
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+          Resource:
+            - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*
+            - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*/index/*
 package:
   exclude:
     - ./**
