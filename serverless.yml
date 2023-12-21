@@ -2,7 +2,6 @@ service: hello-go-gin
 
 provider:
   name: aws
-  region: ap-southeast-1
   runtime: go1.x
 
 package:
