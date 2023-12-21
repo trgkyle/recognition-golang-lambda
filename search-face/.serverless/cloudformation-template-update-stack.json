@@ -152,7 +152,7 @@
                 {
                   "Effect": "Allow",
                   "Action": [
-                    "dynamodb:ReadItem"
+                    "dynamodb:GetItem"
                   ],
                   "Resource": [
                     "arn:aws:dynamodb:ap-southeast-1:*:table/face-recognition-authenticated*",
@@ -174,7 +174,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-search-face/v1/1703183345596-2023-12-21T18:29:05.596Z/face-recognition-search-face.zip"
+          "S3Key": "serverless/face-recognition-search-face/v1/1703185692677-2023-12-21T19:08:12.677Z/face-recognition-search-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
@@ -192,14 +192,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionyTfM3GgVtQTdSmhllwon2ou2XgDL9KO75Iv7AdvDU": {
+    "MainLambdaVersion0I2U95Vi45ihpMZv1A3pDVBBU5D1Ynl8jOKtpbM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "6gcQeYG38pep4Pgn2dHdpOSiVPBqQQPmpUOW0dXhnU8="
+        "CodeSha256": "htGdM62EbyNzi1wux0b7vicTxQ/01KF32eLOKA+mXP4="
       }
     },
     "S3BucketTransactionbbeetech": {
@@ -251,6 +251,36 @@
           "Ref": "AWS::AccountId"
         }
       }
+    },
+    "DynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "face-recognition-authenticated",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "faceId",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "customerId",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "faceId",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "customerId",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
     }
   },
   "Outputs": {
@@ -265,7 +295,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionyTfM3GgVtQTdSmhllwon2ou2XgDL9KO75Iv7AdvDU"
+        "Ref": "MainLambdaVersion0I2U95Vi45ihpMZv1A3pDVBBU5D1Ynl8jOKtpbM"
       },
       "Export": {
         "Name": "sls-face-recognition-search-face-v1-MainLambdaFunctionQualifiedArn"
