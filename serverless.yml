@@ -4,7 +4,6 @@ provider:
   name: aws
   region: us-east-1
   runtime: go1.x
-  architecture: arm64
 
 package:
   exclude:
@@ -17,5 +16,5 @@ functions:
     handler: bin/main
     events:
       - http:
-          path: hello
+          path: /
           method: post

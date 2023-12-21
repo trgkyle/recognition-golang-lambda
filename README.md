@@ -1,8 +1,13 @@
+# 0. RUN ON LOCAL
+```
+    npm run start
+```
+
 # 1.BUILD BIN FILE
 ```
-    go build -o bin/main ./lambda.go
+    npm run build
 ```
 # 2.DEPLOY TO SERVERLESS
 ```
-    serverless deploy
+    npm run deploy
 ```
