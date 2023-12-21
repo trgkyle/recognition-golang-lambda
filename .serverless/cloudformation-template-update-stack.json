@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/hello-go-gin-lambda/dev/1703151349677-2023-12-21T09:35:49.677Z/hello-go-gin-lambda.zip"
+          "S3Key": "serverless/hello-go-gin-lambda/dev/1703151951751-2023-12-21T09:45:51.751Z/hello-go-gin-lambda.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
@@ -180,14 +180,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionFdcpksxKZrr90xLF2u4Zpgcenr3u33L942PQmw849gA": {
+    "MainLambdaVersionmojAkMAYuo96UfXYSlU3Jkx2cTJIMeeayZWwG6ZEcE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "5AaCmsv0KSweygPMkIawxCvyUG0Ef0ZO5+c/XPWamLI="
+        "CodeSha256": "8IZaMkfzuEhoW59rrhAhNk6aX1AyWQvd4Wy6qL4MkTY="
       }
     },
     "ApiGatewayRestApi": {
@@ -202,16 +202,28 @@
         "Policy": ""
       }
     },
-    "ApiGatewayMethodGet": {
-      "Type": "AWS::ApiGateway::Method",
+    "ApiGatewayResourceHello": {
+      "Type": "AWS::ApiGateway::Resource",
       "Properties": {
-        "HttpMethod": "GET",
-        "RequestParameters": {},
-        "ResourceId": {
+        "ParentId": {
           "Fn::GetAtt": [
             "ApiGatewayRestApi",
             "RootResourceId"
           ]
+        },
+        "PathPart": "hello",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodHelloPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceHello"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -251,7 +263,7 @@
         "MainLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1703151348697": {
+    "ApiGatewayDeployment1703151950606": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -260,7 +272,7 @@
         "StageName": "dev"
       },
       "DependsOn": [
-        "ApiGatewayMethodGet"
+        "ApiGatewayMethodHelloPost"
       ]
     },
     "MainLambdaPermissionApiGateway": {
@@ -313,7 +325,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionFdcpksxKZrr90xLF2u4Zpgcenr3u33L942PQmw849gA"
+        "Ref": "MainLambdaVersionmojAkMAYuo96UfXYSlU3Jkx2cTJIMeeayZWwG6ZEcE"
       },
       "Export": {
         "Name": "sls-hello-go-gin-lambda-dev-MainLambdaFunctionQualifiedArn"

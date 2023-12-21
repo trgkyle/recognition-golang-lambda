@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "go run lambda.go",
-    "build": "go build -o bin/main ./lambda.go",
+    "build": "go build -o bin/main ./main.go",
     "deploy": "serverless deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
