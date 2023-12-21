@@ -138,7 +138,7 @@
                 {
                   "Effect": "Allow",
                   "Action": [
-                    "rekognition:SearchFaces"
+                    "rekognition:SearchFacesByImage"
                   ],
                   "Resource": "*"
                 },
@@ -164,19 +164,7 @@
           }
         ],
         "Path": "/",
-        "RoleName": {
-          "Fn::Join": [
-            "-",
-            [
-              "face-recognition-search-face",
-              "v1",
-              {
-                "Ref": "AWS::Region"
-              },
-              "lambdaRole"
-            ]
-          ]
-        }
+        "RoleName": "face-recognition-search-face-role"
       }
     },
     "MainLambdaFunction": {
@@ -186,7 +174,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-search-face/v1/1703181256548-2023-12-21T17:54:16.548Z/face-recognition-search-face.zip"
+          "S3Key": "serverless/face-recognition-search-face/v1/1703183345596-2023-12-21T18:29:05.596Z/face-recognition-search-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",

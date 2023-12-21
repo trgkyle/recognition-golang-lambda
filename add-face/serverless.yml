@@ -7,6 +7,7 @@ provider:
   stage: v1
   iam:
     role:
+      name: face-recognition-add-face-role
       statements:
         - Effect: Allow
           Action:
@@ -35,5 +36,3 @@ functions:
       - s3:
           bucket: face-recognition-bbeetech
           event: s3:ObjectCreated:*
-          rules:
-            - prefix: authenticated/

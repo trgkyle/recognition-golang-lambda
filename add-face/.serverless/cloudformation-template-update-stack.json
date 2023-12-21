@@ -164,19 +164,7 @@
           }
         ],
         "Path": "/",
-        "RoleName": {
-          "Fn::Join": [
-            "-",
-            [
-              "face-recognition-add-face",
-              "v1",
-              {
-                "Ref": "AWS::Region"
-              },
-              "lambdaRole"
-            ]
-          ]
-        }
+        "RoleName": "face-recognition-add-face-role"
       }
     },
     "MainLambdaFunction": {
@@ -186,7 +174,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-add-face/v1/1703181317935-2023-12-21T17:55:17.935Z/face-recognition-add-face.zip"
+          "S3Key": "serverless/face-recognition-add-face/v1/1703183342491-2023-12-21T18:29:02.491Z/face-recognition-add-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
@@ -204,14 +192,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionPSyJQ6oqqoGPUXPokKunmpzfg5s5y4n3WBQtQ2Hz6c": {
+    "MainLambdaVersion7LPx8hoknK2I8wqQoMFGm6WQslabIivBChli9XbiZ2o": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "n5vosi8zOuhInAiQbnKTQ/zSUyCtcgw8V8FCjiDs56w="
+        "CodeSha256": "Gb/rPhg7ntA+dF1NthcATrx7T0o+g/flrwHYoCRlhuk="
       }
     },
     "S3BucketFacerecognitionbbeetech": {
@@ -227,16 +215,6 @@
                   "MainLambdaFunction",
                   "Arn"
                 ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "authenticated/"
-                    }
-                  ]
-                }
               }
             }
           ]
@@ -287,7 +265,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionPSyJQ6oqqoGPUXPokKunmpzfg5s5y4n3WBQtQ2Hz6c"
+        "Ref": "MainLambdaVersion7LPx8hoknK2I8wqQoMFGm6WQslabIivBChli9XbiZ2o"
       },
       "Export": {
         "Name": "sls-face-recognition-add-face-v1-MainLambdaFunctionQualifiedArn"

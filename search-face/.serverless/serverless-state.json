@@ -11,11 +11,12 @@
       "stage": "v1",
       "iam": {
         "role": {
+          "name": "face-recognition-search-face-role",
           "statements": [
             {
               "Effect": "Allow",
               "Action": [
-                "rekognition:SearchFaces"
+                "rekognition:SearchFacesByImage"
               ],
               "Resource": "*"
             },
@@ -191,19 +192,7 @@
                 }
               ],
               "Path": "/",
-              "RoleName": {
-                "Fn::Join": [
-                  "-",
-                  [
-                    "face-recognition-search-face",
-                    "v1",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    "lambdaRole"
-                  ]
-                ]
-              }
+              "RoleName": "face-recognition-search-face-role"
             }
           },
           "MainLambdaFunction": {
@@ -213,7 +202,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/face-recognition-search-face/v1/1703181256548-2023-12-21T17:54:16.548Z/face-recognition-search-face.zip"
+                "S3Key": "serverless/face-recognition-search-face/v1/1703183345596-2023-12-21T18:29:05.596Z/face-recognition-search-face.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
@@ -433,7 +422,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/face-recognition-search-face/v1/code-artifacts",
         "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/search-face/.serverless/face-recognition-search-face.zip",
-        "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703181256548-2023-12-21T17:54:16.548Z"
+        "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703183345596-2023-12-21T18:29:05.596Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -444,7 +433,7 @@
     "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/search-face/.serverless/face-recognition-search-face.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703181256548-2023-12-21T17:54:16.548Z",
+    "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703183345596-2023-12-21T18:29:05.596Z",
     "artifact": "face-recognition-search-face.zip"
   }
 }

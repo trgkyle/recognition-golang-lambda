@@ -7,10 +7,11 @@ provider:
   stage: v1
   iam:
     role:
+      name: face-recognition-search-face-role
       statements:
         - Effect: Allow
           Action:
-            - rekognition:SearchFaces
+            - rekognition:SearchFacesByImage
           Resource: "*"
         - Effect: Allow
           Action:
