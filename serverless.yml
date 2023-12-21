@@ -1,4 +1,4 @@
-service: hello-go-gin
+service: hello-go-gin-lambda
 
 provider:
   name: aws
