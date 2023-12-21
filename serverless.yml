@@ -17,5 +17,10 @@ functions:
     handler: bin/main
     events:
       - http:
+          method: ANY
           path: /
-          method: post
+          cors: true
+      - http:
+          method: ANY
+          path: "{proxy+}"
+          cors: true
