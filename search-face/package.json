@@ -1,5 +1,5 @@
 {
-  "name": "hello-go-gin-lambda",
+  "name": "app-service",
   "version": "1.0.0",
   "description": "```     go build -o bin/main ./lambda.go ``` # 2.DEPLOY TO SERVERLESS ```     serverless deploy ```",
   "main": "index.js",

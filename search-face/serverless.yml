@@ -1,4 +1,4 @@
-service: go-face-recognition-search-face
+service: face-recognition-search-face
 
 provider:
   name: aws
@@ -19,6 +19,7 @@ provider:
         - Effect: Allow
           Action:
             - dynamodb:ReadItem
+            # - dynamodb:Query
           Resource:
             - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*
             - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*/index/*
