@@ -2,6 +2,7 @@ service: hello-go-gin-lambda
 
 provider:
   name: aws
+  region: us-east-1
   runtime: go1.x
 
 package:
