@@ -36,7 +36,6 @@ functions:
       - s3:
           bucket: transaction-bbeetech
           event: s3:ObjectCreated:*
-
 resources:
   Resources:
     DynamoDBTable:
@@ -46,13 +45,7 @@ resources:
         AttributeDefinitions:
           - AttributeName: faceId
             AttributeType: S
-          - AttributeName: customerId
-            AttributeType: S
         KeySchema:
           - AttributeName: faceId
             KeyType: HASH
-          - AttributeName: customerId
-            KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        BillingMode: PAY_PER_REQUEST
