@@ -6,9 +6,9 @@
     },
     "provider": {
       "name": "aws",
-      "region": "us-east-1",
+      "region": "ap-southeast-1",
       "runtime": "go1.x",
-      "stage": "dev",
+      "stage": "v1",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -86,7 +86,7 @@
           "MainLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/hello-go-gin-lambda-dev-main"
+              "LogGroupName": "/aws/lambda/hello-go-gin-lambda-v1-main"
             }
           },
           "IamRoleLambdaExecution": {
@@ -115,7 +115,7 @@
                       "-",
                       [
                         "hello-go-gin-lambda",
-                        "dev",
+                        "v1",
                         "lambda"
                       ]
                     ]
@@ -132,7 +132,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/hello-go-gin-lambda-dev*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/hello-go-gin-lambda-v1*:*"
                           }
                         ]
                       },
@@ -143,7 +143,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/hello-go-gin-lambda-dev*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/hello-go-gin-lambda-v1*:*:*"
                           }
                         ]
                       }
@@ -157,7 +157,7 @@
                   "-",
                   [
                     "hello-go-gin-lambda",
-                    "dev",
+                    "v1",
                     {
                       "Ref": "AWS::Region"
                     },
@@ -174,11 +174,11 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/hello-go-gin-lambda/dev/1703152267282-2023-12-21T09:51:07.282Z/hello-go-gin-lambda.zip"
+                "S3Key": "serverless/hello-go-gin-lambda/v1/1703152594795-2023-12-21T09:56:34.795Z/hello-go-gin-lambda.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
-              "FunctionName": "hello-go-gin-lambda-dev-main",
+              "FunctionName": "hello-go-gin-lambda-v1-main",
               "MemorySize": 1024,
               "Timeout": 6,
               "Role": {
@@ -192,7 +192,7 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersionSxtGETJ2HoetFkTMQyeZaCOE4aAVqdaAZICCUrq3c": {
+          "MainLambdaVersionHKRfy9dsYyH68bNHlVs8RUNUisEgB8qD0gxVzxvAiJw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
@@ -205,7 +205,7 @@
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "dev-hello-go-gin-lambda",
+              "Name": "v1-hello-go-gin-lambda",
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -263,13 +263,13 @@
               "MainLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1703152266212": {
+          "ApiGatewayDeployment1703152593802": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               },
-              "StageName": "dev"
+              "StageName": "v1"
             },
             "DependsOn": [
               "ApiGatewayMethodPost"
@@ -319,16 +319,16 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-hello-go-gin-lambda-dev-ServerlessDeploymentBucketName"
+              "Name": "sls-hello-go-gin-lambda-v1-ServerlessDeploymentBucketName"
             }
           },
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersionSxtGETJ2HoetFkTMQyeZaCOE4aAVqdaAZICCUrq3c"
+              "Ref": "MainLambdaVersionHKRfy9dsYyH68bNHlVs8RUNUisEgB8qD0gxVzxvAiJw"
             },
             "Export": {
-              "Name": "sls-hello-go-gin-lambda-dev-MainLambdaFunctionQualifiedArn"
+              "Name": "sls-hello-go-gin-lambda-v1-MainLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -349,12 +349,12 @@
                   {
                     "Ref": "AWS::URLSuffix"
                   },
-                  "/dev"
+                  "/v1"
                 ]
               ]
             },
             "Export": {
-              "Name": "sls-hello-go-gin-lambda-dev-ServiceEndpoint"
+              "Name": "sls-hello-go-gin-lambda-v1-ServiceEndpoint"
             }
           }
         }
@@ -456,13 +456,13 @@
             }
           }
         ],
-        "name": "hello-go-gin-lambda-dev-main",
+        "name": "hello-go-gin-lambda-v1-main",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "go1.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersionSxtGETJ2HoetFkTMQyeZaCOE4aAVqdaAZICCUrq3c"
+        "versionLogicalId": "MainLambdaVersionHKRfy9dsYyH68bNHlVs8RUNUisEgB8qD0gxVzxvAiJw"
       }
     },
     "configValidationMode": "warn",
@@ -479,9 +479,9 @@
         "include": [
           "./bin/**"
         ],
-        "artifactsS3KeyDirname": "serverless/hello-go-gin-lambda/dev/code-artifacts",
+        "artifactsS3KeyDirname": "serverless/hello-go-gin-lambda/v1/code-artifacts",
         "artifact": "/Users/kyle/Documents/github/real/hello-go-gin-lambda/.serverless/hello-go-gin-lambda.zip",
-        "artifactDirectoryName": "serverless/hello-go-gin-lambda/dev/1703152267282-2023-12-21T09:51:07.282Z"
+        "artifactDirectoryName": "serverless/hello-go-gin-lambda/v1/1703152594795-2023-12-21T09:56:34.795Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -492,7 +492,7 @@
     "artifact": "/Users/kyle/Documents/github/real/hello-go-gin-lambda/.serverless/hello-go-gin-lambda.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/hello-go-gin-lambda/dev/1703152267282-2023-12-21T09:51:07.282Z",
+    "artifactDirectoryName": "serverless/hello-go-gin-lambda/v1/1703152594795-2023-12-21T09:56:34.795Z",
     "artifact": "hello-go-gin-lambda.zip"
   }
 }
