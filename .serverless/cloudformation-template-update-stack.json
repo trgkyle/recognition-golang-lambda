@@ -74,7 +74,7 @@
     "MainLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/hello-go-gin-lambda-v1-main"
+        "LogGroupName": "/aws/lambda/face-recognition-v1-main"
       }
     },
     "IamRoleLambdaExecution": {
@@ -102,7 +102,7 @@
               "Fn::Join": [
                 "-",
                 [
-                  "hello-go-gin-lambda",
+                  "face-recognition",
                   "v1",
                   "lambda"
                 ]
@@ -120,7 +120,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/hello-go-gin-lambda-v1*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-v1*:*"
                     }
                   ]
                 },
@@ -131,9 +131,23 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/hello-go-gin-lambda-v1*:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-v1*:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "rekognition:DetectFaces"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": "arn:aws:s3:::face-recognition-authenticated/*"
                 }
               ]
             }
@@ -144,7 +158,7 @@
           "Fn::Join": [
             "-",
             [
-              "hello-go-gin-lambda",
+              "face-recognition",
               "v1",
               {
                 "Ref": "AWS::Region"
@@ -162,11 +176,11 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/hello-go-gin-lambda/v1/1703153598338-2023-12-21T10:13:18.338Z/hello-go-gin-lambda.zip"
+          "S3Key": "serverless/face-recognition/v1/1703170887718-2023-12-21T15:01:27.718Z/face-recognition.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
-        "FunctionName": "hello-go-gin-lambda-v1-main",
+        "FunctionName": "face-recognition-v1-main",
         "MemorySize": 1024,
         "Timeout": 6,
         "Role": {
@@ -180,247 +194,39 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionosTekC1AqyxS4Z9RmDSxN7QMze1CxG5ExJU5wHCW4": {
+    "MainLambdaVersionHZbZYE3QKJBMtL4KLBkCfTfAzWo7TE3YZMUhdbg8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "oYIGoJRROCbHRkUa1JFyKsqEsOEcGd1kMxztkTGyNCo="
+        "CodeSha256": "dJx91DEn1VSyGoTk0snBuPAVtsxzV04EA6K/5+V47AU="
       }
     },
-    "ApiGatewayRestApi": {
-      "Type": "AWS::ApiGateway::RestApi",
+    "S3BucketFacerecognitionauthenticated": {
+      "Type": "AWS::S3::Bucket",
       "Properties": {
-        "Name": "v1-hello-go-gin-lambda",
-        "EndpointConfiguration": {
-          "Types": [
-            "EDGE"
-          ]
-        },
-        "Policy": ""
-      }
-    },
-    "ApiGatewayResourceProxyVar": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "PathPart": "{proxy+}",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodOptions": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "AuthorizationType": "NONE",
-        "HttpMethod": "OPTIONS",
-        "MethodResponses": [
-          {
-            "StatusCode": "200",
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true,
-              "method.response.header.Access-Control-Allow-Headers": true,
-              "method.response.header.Access-Control-Allow-Methods": true
-            },
-            "ResponseModels": {}
-          }
-        ],
-        "RequestParameters": {},
-        "Integration": {
-          "Type": "MOCK",
-          "RequestTemplates": {
-            "application/json": "{statusCode:200}"
-          },
-          "ContentHandling": "CONVERT_TO_TEXT",
-          "IntegrationResponses": [
+        "BucketName": "face-recognition-authenticated",
+        "NotificationConfiguration": {
+          "LambdaConfigurations": [
             {
-              "StatusCode": "200",
-              "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'*'",
-                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
-                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
-              },
-              "ResponseTemplates": {
-                "application/json": ""
+              "Event": "s3:ObjectCreated:*",
+              "Function": {
+                "Fn::GetAtt": [
+                  "MainLambdaFunction",
+                  "Arn"
+                ]
               }
             }
           ]
-        },
-        "ResourceId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
         }
-      }
-    },
-    "ApiGatewayMethodProxyVarOptions": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "AuthorizationType": "NONE",
-        "HttpMethod": "OPTIONS",
-        "MethodResponses": [
-          {
-            "StatusCode": "200",
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true,
-              "method.response.header.Access-Control-Allow-Headers": true,
-              "method.response.header.Access-Control-Allow-Methods": true
-            },
-            "ResponseModels": {}
-          }
-        ],
-        "RequestParameters": {},
-        "Integration": {
-          "Type": "MOCK",
-          "RequestTemplates": {
-            "application/json": "{statusCode:200}"
-          },
-          "ContentHandling": "CONVERT_TO_TEXT",
-          "IntegrationResponses": [
-            {
-              "StatusCode": "200",
-              "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'*'",
-                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
-                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
-              },
-              "ResponseTemplates": {
-                "application/json": ""
-              }
-            }
-          ]
-        },
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceProxyVar"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodAny": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "HttpMethod": "ANY",
-        "RequestParameters": {},
-        "ResourceId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ApiKeyRequired": false,
-        "AuthorizationType": "NONE",
-        "Integration": {
-          "IntegrationHttpMethod": "POST",
-          "Type": "AWS_PROXY",
-          "Uri": {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":apigateway:",
-                {
-                  "Ref": "AWS::Region"
-                },
-                ":lambda:path/2015-03-31/functions/",
-                {
-                  "Fn::GetAtt": [
-                    "MainLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "/invocations"
-              ]
-            ]
-          }
-        },
-        "MethodResponses": []
       },
       "DependsOn": [
-        "MainLambdaPermissionApiGateway"
+        "MainLambdaPermissionFacerecognitionauthenticatedS3"
       ]
     },
-    "ApiGatewayMethodProxyVarAny": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "HttpMethod": "ANY",
-        "RequestParameters": {},
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceProxyVar"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ApiKeyRequired": false,
-        "AuthorizationType": "NONE",
-        "Integration": {
-          "IntegrationHttpMethod": "POST",
-          "Type": "AWS_PROXY",
-          "Uri": {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":apigateway:",
-                {
-                  "Ref": "AWS::Region"
-                },
-                ":lambda:path/2015-03-31/functions/",
-                {
-                  "Fn::GetAtt": [
-                    "MainLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "/invocations"
-              ]
-            ]
-          }
-        },
-        "MethodResponses": []
-      },
-      "DependsOn": [
-        "MainLambdaPermissionApiGateway"
-      ]
-    },
-    "ApiGatewayDeployment1703153597336": {
-      "Type": "AWS::ApiGateway::Deployment",
-      "Properties": {
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "StageName": "v1"
-      },
-      "DependsOn": [
-        "ApiGatewayMethodOptions",
-        "ApiGatewayMethodProxyVarOptions",
-        "ApiGatewayMethodAny",
-        "ApiGatewayMethodProxyVarAny"
-      ]
-    },
-    "MainLambdaPermissionApiGateway": {
+    "MainLambdaPermissionFacerecognitionauthenticatedS3": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
@@ -430,7 +236,7 @@
           ]
         },
         "Action": "lambda:InvokeFunction",
-        "Principal": "apigateway.amazonaws.com",
+        "Principal": "s3.amazonaws.com",
         "SourceArn": {
           "Fn::Join": [
             "",
@@ -439,21 +245,12 @@
               {
                 "Ref": "AWS::Partition"
               },
-              ":execute-api:",
-              {
-                "Ref": "AWS::Region"
-              },
-              ":",
-              {
-                "Ref": "AWS::AccountId"
-              },
-              ":",
-              {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "/*/*"
+              ":s3:::face-recognition-authenticated"
             ]
           ]
+        },
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
         }
       }
     }
@@ -464,42 +261,16 @@
         "Ref": "ServerlessDeploymentBucket"
       },
       "Export": {
-        "Name": "sls-hello-go-gin-lambda-v1-ServerlessDeploymentBucketName"
+        "Name": "sls-face-recognition-v1-ServerlessDeploymentBucketName"
       }
     },
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionosTekC1AqyxS4Z9RmDSxN7QMze1CxG5ExJU5wHCW4"
+        "Ref": "MainLambdaVersionHZbZYE3QKJBMtL4KLBkCfTfAzWo7TE3YZMUhdbg8"
       },
       "Export": {
-        "Name": "sls-hello-go-gin-lambda-v1-MainLambdaFunctionQualifiedArn"
-      }
-    },
-    "ServiceEndpoint": {
-      "Description": "URL of the service endpoint",
-      "Value": {
-        "Fn::Join": [
-          "",
-          [
-            "https://",
-            {
-              "Ref": "ApiGatewayRestApi"
-            },
-            ".execute-api.",
-            {
-              "Ref": "AWS::Region"
-            },
-            ".",
-            {
-              "Ref": "AWS::URLSuffix"
-            },
-            "/v1"
-          ]
-        ]
-      },
-      "Export": {
-        "Name": "sls-hello-go-gin-lambda-v1-ServiceEndpoint"
+        "Name": "sls-face-recognition-v1-MainLambdaFunctionQualifiedArn"
       }
     }
   }

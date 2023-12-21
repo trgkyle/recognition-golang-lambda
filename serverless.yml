@@ -1,10 +1,21 @@
-service: hello-go-gin-lambda
+service: face-recognition
 
 provider:
   name: aws
   region: ap-southeast-1
   runtime: go1.x
   stage: v1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - rekognition:DetectFaces
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource: "arn:aws:s3:::face-recognition-authenticated/*"
 
 package:
   exclude:
@@ -16,11 +27,6 @@ functions:
   main:
     handler: bin/main
     events:
-      - http:
-          method: ANY
-          path: /
-          cors: true
-      - http:
-          method: ANY
-          path: "{proxy+}"
-          cors: true
+      - s3:
+          bucket: face-recognition-authenticated
+          event: s3:ObjectCreated:*
