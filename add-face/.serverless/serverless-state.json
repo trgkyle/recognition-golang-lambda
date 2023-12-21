@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "face-recognition",
+    "service": "face-recognition-add-face",
     "serviceObject": {
-      "name": "face-recognition"
+      "name": "face-recognition-add-face"
     },
     "provider": {
       "name": "aws",
@@ -24,7 +24,7 @@
               "Action": [
                 "s3:GetObject"
               ],
-              "Resource": "arn:aws:s3:::face-recognition-authenticated/*"
+              "Resource": "arn:aws:s3:::facerecognition-bbeetech/*"
             },
             {
               "Effect": "Allow",
@@ -116,7 +116,7 @@
           "MainLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/face-recognition-v1-main"
+              "LogGroupName": "/aws/lambda/face-recognition-add-face-v1-main"
             }
           },
           "IamRoleLambdaExecution": {
@@ -144,7 +144,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "face-recognition",
+                        "face-recognition-add-face",
                         "v1",
                         "lambda"
                       ]
@@ -162,7 +162,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-v1*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-add-face-v1*:*"
                           }
                         ]
                       },
@@ -173,7 +173,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-v1*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-add-face-v1*:*:*"
                           }
                         ]
                       },
@@ -195,7 +195,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "face-recognition",
+                    "face-recognition-add-face",
                     "v1",
                     {
                       "Ref": "AWS::Region"
@@ -213,11 +213,11 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/face-recognition/v1/1703176119813-2023-12-21T16:28:39.813Z/face-recognition.zip"
+                "S3Key": "serverless/face-recognition-add-face/v1/1703177689860-2023-12-21T16:54:49.860Z/face-recognition-add-face.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
-              "FunctionName": "face-recognition-v1-main",
+              "FunctionName": "face-recognition-add-face-v1-main",
               "MemorySize": 1024,
               "Timeout": 6,
               "Role": {
@@ -231,20 +231,20 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersionKhEb5lNoDQeOI1aDeNzdH54FHjzHHvw2wbY90Ikw5c": {
+          "MainLambdaVersionPSyJQ6oqqoGPUXPokKunmpzfg5s5y4n3WBQtQ2Hz6c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "MainLambdaFunction"
               },
-              "CodeSha256": "AUwpZd7MI6XhUu9yFGJE/N63nun4vmxqq/fJzbm/fMY="
+              "CodeSha256": "n5vosi8zOuhInAiQbnKTQ/zSUyCtcgw8V8FCjiDs56w="
             }
           },
-          "S3BucketFacerecognitionauthenticated": {
+          "S3BucketFacerecognitionbbeetech": {
             "Type": "AWS::S3::Bucket",
             "Properties": {
-              "BucketName": "face-recognition-authenticated",
+              "BucketName": "facerecognition-bbeetech",
               "NotificationConfiguration": {
                 "LambdaConfigurations": [
                   {
@@ -254,16 +254,26 @@
                         "MainLambdaFunction",
                         "Arn"
                       ]
+                    },
+                    "Filter": {
+                      "S3Key": {
+                        "Rules": [
+                          {
+                            "Name": "prefix",
+                            "Value": "authenticated/"
+                          }
+                        ]
+                      }
                     }
                   }
                 ]
               }
             },
             "DependsOn": [
-              "MainLambdaPermissionFacerecognitionauthenticatedS3"
+              "MainLambdaPermissionFacerecognitionbbeetechS3"
             ]
           },
-          "MainLambdaPermissionFacerecognitionauthenticatedS3": {
+          "MainLambdaPermissionFacerecognitionbbeetechS3": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
               "FunctionName": {
@@ -282,7 +292,7 @@
                     {
                       "Ref": "AWS::Partition"
                     },
-                    ":s3:::face-recognition-authenticated"
+                    ":s3:::facerecognition-bbeetech"
                   ]
                 ]
               },
@@ -298,16 +308,16 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-face-recognition-v1-ServerlessDeploymentBucketName"
+              "Name": "sls-face-recognition-add-face-v1-ServerlessDeploymentBucketName"
             }
           },
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersionKhEb5lNoDQeOI1aDeNzdH54FHjzHHvw2wbY90Ikw5c"
+              "Ref": "MainLambdaVersionPSyJQ6oqqoGPUXPokKunmpzfg5s5y4n3WBQtQ2Hz6c"
             },
             "Export": {
-              "Name": "sls-face-recognition-v1-MainLambdaFunctionQualifiedArn"
+              "Name": "sls-face-recognition-add-face-v1-MainLambdaFunctionQualifiedArn"
             }
           }
         }
@@ -403,24 +413,29 @@
         "events": [
           {
             "s3": {
-              "bucket": "face-recognition-authenticated",
-              "event": "s3:ObjectCreated:*"
+              "bucket": "facerecognition-bbeetech",
+              "event": "s3:ObjectCreated:*",
+              "rules": [
+                {
+                  "prefix": "authenticated/"
+                }
+              ]
             }
           }
         ],
-        "name": "face-recognition-v1-main",
+        "name": "face-recognition-add-face-v1-main",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "go1.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersionKhEb5lNoDQeOI1aDeNzdH54FHjzHHvw2wbY90Ikw5c"
+        "versionLogicalId": "MainLambdaVersionPSyJQ6oqqoGPUXPokKunmpzfg5s5y4n3WBQtQ2Hz6c"
       }
     },
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
     "initialServerlessConfig": {
-      "service": "face-recognition",
+      "service": "face-recognition-add-face",
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
       },
@@ -431,9 +446,9 @@
         "include": [
           "./bin/**"
         ],
-        "artifactsS3KeyDirname": "serverless/face-recognition/v1/code-artifacts",
-        "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/.serverless/face-recognition.zip",
-        "artifactDirectoryName": "serverless/face-recognition/v1/1703176119813-2023-12-21T16:28:39.813Z"
+        "artifactsS3KeyDirname": "serverless/face-recognition-add-face/v1/code-artifacts",
+        "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/add-faces/.serverless/face-recognition-add-face.zip",
+        "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703177689860-2023-12-21T16:54:49.860Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -441,10 +456,10 @@
     },
     "layers": {},
     "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/.serverless/face-recognition.zip"
+    "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/add-faces/.serverless/face-recognition-add-face.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/face-recognition/v1/1703176119813-2023-12-21T16:28:39.813Z",
-    "artifact": "face-recognition.zip"
+    "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703177689860-2023-12-21T16:54:49.860Z",
+    "artifact": "face-recognition-add-face.zip"
   }
 }

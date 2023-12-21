@@ -54,14 +54,6 @@ func addFacesToDynamoDB(sess *session.Session, faceDetails []*rekognition.FaceRe
 	dbSvc := dynamodb.New(sess)
 
 	fileName := strings.TrimSuffix(key, filepath.Ext(key))
-	parts := strings.Split(fileName, "_")
-
-	if len(parts) < 2 {
-		log.Printf("Error file format :>> %v", fileName)
-		return
-	}
-	organizationId := parts[0]
-	customerId := parts[1]
 
 	// Modify this part based on your DynamoDB schema
 	for _, faceDetail := range faceDetails {
@@ -70,11 +62,8 @@ func addFacesToDynamoDB(sess *session.Session, faceDetails []*rekognition.FaceRe
 				"faceId": {
 					S: aws.String(*faceDetail.Face.FaceId),
 				},
-				"organizationId": {
-					S: aws.String(organizationId),
-				},
 				"customerId": {
-					S: aws.String(customerId),
+					S: aws.String(fileName),
 				},
 			},
 			TableName: aws.String("face-recognition-authenticated"),

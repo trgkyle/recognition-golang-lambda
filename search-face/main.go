@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"path/filepath"
-	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -24,14 +22,14 @@ func handler(ctx context.Context, s3Event events.S3Event) {
 		bucket := s3.Bucket.Name
 
 		// Perform facial recognition using AWS Rekognition
-		addFaces(sess, bucket, key)
+		searchFaces(sess, bucket, key)
 	}
 }
 
-func addFaces(sess *session.Session, bucket, key string) {
+func searchFaces(sess *session.Session, bucket, key string) {
 	svc := rekognition.New(sess)
 
-	input := &rekognition.IndexFacesInput{
+	input := &rekognition.SearchFacesByImageInput{
 		CollectionId: aws.String("customers"),
 		Image: &rekognition.Image{
 			S3Object: &rekognition.S3Object{
@@ -41,51 +39,47 @@ func addFaces(sess *session.Session, bucket, key string) {
 		},
 	}
 
-	result, err := svc.IndexFaces(input)
+	result, err := svc.SearchFacesByImage(input)
 	if err != nil {
 		log.Printf("Error index faces:>> %v", err)
 		return
 	}
 
-	addFacesToDynamoDB(sess, result.FaceRecords, key)
+	searchFacesInDynamoDB(sess, result.FaceMatches)
 }
 
-func addFacesToDynamoDB(sess *session.Session, faceDetails []*rekognition.FaceRecord, key string) {
+func searchFacesInDynamoDB(sess *session.Session, faceDetails []*rekognition.FaceMatch) {
 	dbSvc := dynamodb.New(sess)
 
-	fileName := strings.TrimSuffix(key, filepath.Ext(key))
-	parts := strings.Split(fileName, "_")
+	for _, match := range faceDetails {
+		faceId := *match.Face.FaceId
 
-	if len(parts) < 2 {
-		log.Printf("Error file format :>> %v", fileName)
-		return
-	}
-	organizationId := parts[0]
-	customerId := parts[1]
-
-	// Modify this part based on your DynamoDB schema
-	for _, faceDetail := range faceDetails {
-		input := &dynamodb.PutItemInput{
-			Item: map[string]*dynamodb.AttributeValue{
+		// Retrieve identity information from DynamoDB
+		getItemInput := &dynamodb.GetItemInput{
+			TableName: aws.String("face-recognition-authenticated"), // Replace with your DynamoDB table name
+			Key: map[string]*dynamodb.AttributeValue{
 				"faceId": {
-					S: aws.String(*faceDetail.Face.FaceId),
-				},
-				"organizationId": {
-					S: aws.String(organizationId),
-				},
-				"customerId": {
-					S: aws.String(customerId),
+					S: aws.String(faceId),
 				},
 			},
-			TableName: aws.String("face-recognition-authenticated"),
 		}
 
-		_, err := dbSvc.PutItem(input)
+		getItemOutput, err := dbSvc.GetItem(getItemInput)
 		if err != nil {
-			log.Printf("Error put to DynamoDB :>> %v", err)
-			return
+			log.Println("Error retrieving item from DynamoDB:", err.Error())
+			continue // Skip to the next faceMatch in case of errors
+		}
+
+		if getItemOutput.Item != nil {
+			// Identity information found
+			name := *getItemOutput.Item["customerId"].S
+
+			log.Printf("Found customer ID:>> %v", name)
+		} else {
+			log.Printf("Warning: Face ID not found in DynamoDB :>> %v", faceId)
 		}
 	}
+
 }
 
 func main() {

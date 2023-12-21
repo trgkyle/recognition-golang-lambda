@@ -12,6 +12,6 @@
     npm run deploy
 ```
 
+# 3. SETUP MANUALLY
+create dynamodb table: face-recognition-authenticated
 aws rekognition create-collection --collection-id customers --region ap-southeast-1
-
-

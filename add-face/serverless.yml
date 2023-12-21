@@ -1,4 +1,4 @@
-service: face-recognition
+service: face-recognition-add-face
 
 provider:
   name: aws
@@ -15,7 +15,7 @@ provider:
         - Effect: Allow
           Action:
             - s3:GetObject
-          Resource: "arn:aws:s3:::face-recognition-authenticated/*"
+          Resource: "arn:aws:s3:::facerecognition-bbeetech/*"
         - Effect: Allow
           Action:
             - dynamodb:PutItem
@@ -33,5 +33,7 @@ functions:
     handler: bin/main
     events:
       - s3:
-          bucket: face-recognition-authenticated
+          bucket: facerecognition-bbeetech
           event: s3:ObjectCreated:*
+          rules:
+            - prefix: authenticated/

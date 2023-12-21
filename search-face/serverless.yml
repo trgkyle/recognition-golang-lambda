@@ -10,15 +10,15 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - rekognition:IndexFaces
+            - rekognition:SearchFaces
           Resource: "*"
         - Effect: Allow
           Action:
             - s3:GetObject
-          Resource: "arn:aws:s3:::face-recognition-authenticated/*"
+          Resource: "arn:aws:s3:::face-recognition-bbeetech/*"
         - Effect: Allow
           Action:
-            - dynamodb:PutItem
+            - dynamodb:ReadItem
           Resource:
             - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*
             - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*/index/*
@@ -33,5 +33,7 @@ functions:
     handler: bin/main
     events:
       - s3:
-          bucket: face-recognition-authenticated
+          bucket: face-recognition-bbeetech # Need to replace all
           event: s3:ObjectCreated:*
+          rules:
+            - prefix: transactions/
