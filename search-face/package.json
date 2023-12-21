@@ -1,0 +1,22 @@
+{
+  "name": "hello-go-gin-lambda",
+  "version": "1.0.0",
+  "description": "```     go build -o bin/main ./lambda.go ``` # 2.DEPLOY TO SERVERLESS ```     serverless deploy ```",
+  "main": "index.js",
+  "scripts": {
+    "start": "serverless invoke -f main",
+    "build": "GOARCH=amd64 GOOS=linux go build -o bin/ .",
+    "deploy": "serverless deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bbeetech/hello-go-gin-lambda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bbeetech/hello-go-gin-lambda/issues"
+  },
+  "homepage": "https://github.com/bbeetech/hello-go-gin-lambda#readme"
+}

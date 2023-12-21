@@ -1,2 +1,2 @@
-bin
-.serverless/*.zip
+**/bin
+**/.serverless/*.zip
