@@ -191,7 +191,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/face-recognition-add-face/v1/1703421700488-2023-12-24T12:41:40.488Z/face-recognition-add-face.zip"
+                "S3Key": "serverless/face-recognition-add-face/v1/1703422712430-2023-12-24T12:58:32.430Z/face-recognition-add-face.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
@@ -411,7 +411,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/face-recognition-add-face/v1/code-artifacts",
         "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/add-face/.serverless/face-recognition-add-face.zip",
-        "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703421700488-2023-12-24T12:41:40.488Z"
+        "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703422712430-2023-12-24T12:58:32.430Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -422,7 +422,7 @@
     "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/add-face/.serverless/face-recognition-add-face.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703421700488-2023-12-24T12:41:40.488Z",
+    "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703422712430-2023-12-24T12:58:32.430Z",
     "artifact": "face-recognition-add-face.zip"
   }
 }

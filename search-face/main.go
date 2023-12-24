@@ -37,6 +37,7 @@ func searchUsersByImage(sess *session.Session, bucket, key string) {
 				Name:   aws.String(key),
 			},
 		},
+		MaxUsers: aws.Int64(5),
 	}
 
 	result, err := svc.SearchUsersByImage(input)

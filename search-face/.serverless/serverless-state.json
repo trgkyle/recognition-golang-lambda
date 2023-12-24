@@ -189,7 +189,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/face-recognition-search-face/v1/1703419250119-2023-12-24T12:00:50.119Z/face-recognition-search-face.zip"
+                "S3Key": "serverless/face-recognition-search-face/v1/1703422426329-2023-12-24T12:53:46.329Z/face-recognition-search-face.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
@@ -207,14 +207,14 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersionD7Q0CZFnRZ8lPsP184YTkmhaQPX0Srs15EgBb1RmbM": {
+          "MainLambdaVersiongc7aLpTr2NF56y5z23rOldw0frvsXIXCbPvdJQPzMg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "MainLambdaFunction"
               },
-              "CodeSha256": "Z6Xgzy/rZ/MAWCze5yLnvBg2P8/1LVlD2aIoBtcdDC4="
+              "CodeSha256": "1p//sXB4bL+HfbuE3E0j69XOoekLxwiVGRW+P5f5u4Y="
             }
           },
           "S3BucketTransactionbbeetech": {
@@ -280,7 +280,7 @@
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersionD7Q0CZFnRZ8lPsP184YTkmhaQPX0Srs15EgBb1RmbM"
+              "Ref": "MainLambdaVersiongc7aLpTr2NF56y5z23rOldw0frvsXIXCbPvdJQPzMg"
             },
             "Export": {
               "Name": "sls-face-recognition-search-face-v1-MainLambdaFunctionQualifiedArn"
@@ -390,7 +390,7 @@
         "timeout": 6,
         "runtime": "go1.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersionD7Q0CZFnRZ8lPsP184YTkmhaQPX0Srs15EgBb1RmbM"
+        "versionLogicalId": "MainLambdaVersiongc7aLpTr2NF56y5z23rOldw0frvsXIXCbPvdJQPzMg"
       }
     },
     "configValidationMode": "warn",
@@ -409,7 +409,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/face-recognition-search-face/v1/code-artifacts",
         "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/search-face/.serverless/face-recognition-search-face.zip",
-        "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703419250119-2023-12-24T12:00:50.119Z"
+        "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703422426329-2023-12-24T12:53:46.329Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -420,7 +420,7 @@
     "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/search-face/.serverless/face-recognition-search-face.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703419250119-2023-12-24T12:00:50.119Z",
+    "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703422426329-2023-12-24T12:53:46.329Z",
     "artifact": "face-recognition-search-face.zip"
   }
 }

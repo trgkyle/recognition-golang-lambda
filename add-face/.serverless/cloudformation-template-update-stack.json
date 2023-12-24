@@ -166,7 +166,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-add-face/v1/1703421700488-2023-12-24T12:41:40.488Z/face-recognition-add-face.zip"
+          "S3Key": "serverless/face-recognition-add-face/v1/1703422712430-2023-12-24T12:58:32.430Z/face-recognition-add-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
