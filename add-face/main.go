@@ -67,11 +67,8 @@ func associateFaces(svc *rekognition.Rekognition, collectionID string, userId st
 		UserId:       aws.String(userId),
 	}
 
-	_, userCreatedErr := svc.CreateUser(userCreated)
+	svc.CreateUser(userCreated)
 
-	if userCreatedErr != nil {
-		log.Printf("Error create user may user exist :>> %v", userCreatedErr)
-	}
 	input := &rekognition.AssociateFacesInput{
 		CollectionId: aws.String(collectionID),
 		UserId:       aws.String(userId),
@@ -83,8 +80,6 @@ func associateFaces(svc *rekognition.Rekognition, collectionID string, userId st
 		log.Printf("Error associating faces to user :>> %v", err)
 		return
 	}
-
-	log.Printf("Faces associated with user %v successfully. 🎉", userId)
 }
 
 func main() {
