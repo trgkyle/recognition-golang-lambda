@@ -138,7 +138,7 @@
                 {
                   "Effect": "Allow",
                   "Action": [
-                    "rekognition:SearchFacesByImage"
+                    "rekognition:SearchUsersByImage"
                   ],
                   "Resource": "*"
                 },
@@ -148,16 +148,6 @@
                     "s3:GetObject"
                   ],
                   "Resource": "arn:aws:s3:::transaction-bbeetech/*"
-                },
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "dynamodb:GetItem"
-                  ],
-                  "Resource": [
-                    "arn:aws:dynamodb:ap-southeast-1:*:table/face-recognition-authenticated*",
-                    "arn:aws:dynamodb:ap-southeast-1:*:table/face-recognition-authenticated*/index/*"
-                  ]
                 }
               ]
             }
@@ -174,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-search-face/v1/1703188039377-2023-12-21T19:47:19.377Z/face-recognition-search-face.zip"
+          "S3Key": "serverless/face-recognition-search-face/v1/1703419250119-2023-12-24T12:00:50.119Z/face-recognition-search-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
@@ -192,14 +182,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionyTfM3GgVtQTdSmhllwon2ou2XgDL9KO75Iv7AdvDU": {
+    "MainLambdaVersionD7Q0CZFnRZ8lPsP184YTkmhaQPX0Srs15EgBb1RmbM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "6gcQeYG38pep4Pgn2dHdpOSiVPBqQQPmpUOW0dXhnU8="
+        "CodeSha256": "Z6Xgzy/rZ/MAWCze5yLnvBg2P8/1LVlD2aIoBtcdDC4="
       }
     },
     "S3BucketTransactionbbeetech": {
@@ -251,25 +241,6 @@
           "Ref": "AWS::AccountId"
         }
       }
-    },
-    "DynamoDBTable": {
-      "Type": "AWS::DynamoDB::Table",
-      "Properties": {
-        "TableName": "face-recognition-authenticated",
-        "AttributeDefinitions": [
-          {
-            "AttributeName": "faceId",
-            "AttributeType": "S"
-          }
-        ],
-        "KeySchema": [
-          {
-            "AttributeName": "faceId",
-            "KeyType": "HASH"
-          }
-        ],
-        "BillingMode": "PAY_PER_REQUEST"
-      }
     }
   },
   "Outputs": {
@@ -284,7 +255,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionyTfM3GgVtQTdSmhllwon2ou2XgDL9KO75Iv7AdvDU"
+        "Ref": "MainLambdaVersionD7Q0CZFnRZ8lPsP184YTkmhaQPX0Srs15EgBb1RmbM"
       },
       "Export": {
         "Name": "sls-face-recognition-search-face-v1-MainLambdaFunctionQualifiedArn"

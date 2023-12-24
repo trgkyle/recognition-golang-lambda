@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/rekognition"
 )
 
@@ -21,16 +20,17 @@ func handler(ctx context.Context, s3Event events.S3Event) {
 		key := s3.Object.Key
 		bucket := s3.Bucket.Name
 
-		// Perform facial recognition using AWS Rekognition
-		searchFaces(sess, bucket, key)
+		// Search for users using the image
+		searchUsersByImage(sess, bucket, key)
 	}
 }
 
-func searchFaces(sess *session.Session, bucket, key string) {
+func searchUsersByImage(sess *session.Session, bucket, key string) {
 	svc := rekognition.New(sess)
 
-	input := &rekognition.SearchFacesByImageInput{
-		CollectionId: aws.String("customers"),
+	collectionID := "customers"
+	input := &rekognition.SearchUsersByImageInput{
+		CollectionId: aws.String(collectionID),
 		Image: &rekognition.Image{
 			S3Object: &rekognition.S3Object{
 				Bucket: aws.String(bucket),
@@ -39,47 +39,18 @@ func searchFaces(sess *session.Session, bucket, key string) {
 		},
 	}
 
-	result, err := svc.SearchFacesByImage(input)
+	result, err := svc.SearchUsersByImage(input)
 	if err != nil {
-		log.Printf("Error index faces:>> %v", err)
+		log.Printf("Error searching for users by image :>> %v", err)
 		return
 	}
 
-	searchFacesInDynamoDB(sess, result.FaceMatches)
-}
-
-func searchFacesInDynamoDB(sess *session.Session, faceDetails []*rekognition.FaceMatch) {
-	dbSvc := dynamodb.New(sess)
-
-	for _, match := range faceDetails {
-		faceId := *match.Face.FaceId
-
-		// Retrieve identity information from DynamoDB
-		getItemInput := &dynamodb.GetItemInput{
-			TableName: aws.String("face-recognition-authenticated"), // Replace with your DynamoDB table name
-			Key: map[string]*dynamodb.AttributeValue{
-				"faceId": {
-					S: aws.String(faceId),
-				},
-			},
-		}
-
-		getItemOutput, err := dbSvc.GetItem(getItemInput)
-		if err != nil {
-			log.Println("Error retrieving item from DynamoDB:", err.Error())
-			continue // Skip to the next faceMatch in case of errors
-		}
-
-		if getItemOutput.Item != nil {
-			// Identity information found
-			name := *getItemOutput.Item["customerId"].S
-
-			log.Printf("Found customer ID:>> %v", name)
-		} else {
-			log.Printf("Warning: Face ID not found in DynamoDB :>> %v", faceId)
-		}
+	log.Printf("Found %d user matches 🧐:", len(result.UserMatches))
+	for _, match := range result.UserMatches {
+		userID := *match.User.UserId
+		similarity := *match.Similarity
+		log.Printf("- User ID: %s (Similarity: %.2f%%)", userID, similarity)
 	}
-
 }
 
 func main() {

@@ -11,18 +11,12 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - rekognition:SearchFacesByImage
+            - rekognition:SearchUsersByImage
           Resource: "*"
         - Effect: Allow
           Action:
             - s3:GetObject
           Resource: "arn:aws:s3:::transaction-bbeetech/*"
-        - Effect: Allow
-          Action:
-            - dynamodb:GetItem
-          Resource:
-            - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*
-            - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/face-recognition-authenticated*/index/*
 package:
   exclude:
     - ./**
@@ -36,16 +30,3 @@ functions:
       - s3:
           bucket: transaction-bbeetech
           event: s3:ObjectCreated:*
-resources:
-  Resources:
-    DynamoDBTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: face-recognition-authenticated
-        AttributeDefinitions:
-          - AttributeName: faceId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: faceId
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
