@@ -49,7 +49,8 @@ func addFaces(sess *session.Session, bucket, key string) {
 		return
 	}
 
-	userId := strings.TrimSuffix(key, filepath.Ext(key))
+	fileNameSplit := strings.Split(strings.TrimSuffix(key, filepath.Ext(key)), "_")
+	userId := fileNameSplit[0]
 
 	associateFaces(svc, collectionID, userId, result.FaceRecords)
 
