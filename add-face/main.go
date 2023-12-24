@@ -10,7 +10,6 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/rekognition"
 )
 
@@ -31,8 +30,11 @@ func handler(ctx context.Context, s3Event events.S3Event) {
 func addFaces(sess *session.Session, bucket, key string) {
 	svc := rekognition.New(sess)
 
+	// Face kognition collection ID
+	collectionID := "customers"
+
 	input := &rekognition.IndexFacesInput{
-		CollectionId: aws.String("customers"),
+		CollectionId: aws.String(collectionID),
 		Image: &rekognition.Image{
 			S3Object: &rekognition.S3Object{
 				Bucket: aws.String(bucket),
@@ -43,38 +45,46 @@ func addFaces(sess *session.Session, bucket, key string) {
 
 	result, err := svc.IndexFaces(input)
 	if err != nil {
-		log.Printf("Error index faces:>> %v", err)
+		log.Printf("Error index faces :>> %v", err)
 		return
 	}
 
-	addFacesToDynamoDB(sess, result.FaceRecords, key)
+	userId := strings.TrimSuffix(key, filepath.Ext(key))
+
+	associateFaces(svc, collectionID, userId, result.FaceRecords)
+
 }
 
-func addFacesToDynamoDB(sess *session.Session, faceDetails []*rekognition.FaceRecord, key string) {
-	dbSvc := dynamodb.New(sess)
+func associateFaces(svc *rekognition.Rekognition, collectionID string, userId string, faceRecords []*rekognition.FaceRecord) {
+	faceIds := make([]*string, len(faceRecords))
 
-	fileName := strings.TrimSuffix(key, filepath.Ext(key))
-
-	// Modify this part based on your DynamoDB schema
-	for _, faceDetail := range faceDetails {
-		input := &dynamodb.PutItemInput{
-			Item: map[string]*dynamodb.AttributeValue{
-				"faceId": {
-					S: aws.String(*faceDetail.Face.FaceId),
-				},
-				"customerId": {
-					S: aws.String(fileName),
-				},
-			},
-			TableName: aws.String("face-recognition-authenticated"),
-		}
-
-		_, err := dbSvc.PutItem(input)
-		if err != nil {
-			log.Printf("Error put to DynamoDB :>> %v", err)
-			return
-		}
+	for i, face := range faceRecords {
+		faceIds[i] = face.Face.FaceId
 	}
+
+	userCreated := &rekognition.CreateUserInput{
+		CollectionId: aws.String(collectionID),
+		UserId:       aws.String(userId),
+	}
+
+	_, userCreatedErr := svc.CreateUser(userCreated)
+
+	if userCreatedErr != nil {
+		log.Printf("Error create user may user exist :>> %v", userCreatedErr)
+	}
+	input := &rekognition.AssociateFacesInput{
+		CollectionId: aws.String(collectionID),
+		UserId:       aws.String(userId),
+		FaceIds:      faceIds,
+	}
+
+	_, err := svc.AssociateFaces(input)
+	if err != nil {
+		log.Printf("Error associating faces to user :>> %v", err)
+		return
+	}
+
+	log.Printf("Faces associated with user %v successfully. 🎉", userId)
 }
 
 func main() {

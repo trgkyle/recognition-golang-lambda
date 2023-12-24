@@ -16,7 +16,9 @@
             {
               "Effect": "Allow",
               "Action": [
-                "rekognition:IndexFaces"
+                "rekognition:IndexFaces",
+                "rekognition:AssociateFaces",
+                "rekognition:CreateUser"
               ],
               "Resource": "*"
             },
@@ -26,16 +28,6 @@
                 "s3:GetObject"
               ],
               "Resource": "arn:aws:s3:::face-recognition-bbeetech/*"
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:PutItem"
-              ],
-              "Resource": [
-                "arn:aws:dynamodb:ap-southeast-1:*:table/face-recognition-authenticated*",
-                "arn:aws:dynamodb:ap-southeast-1:*:table/face-recognition-authenticated*/index/*"
-              ]
             }
           ]
         }
@@ -183,9 +175,6 @@
                       },
                       {
                         "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][1]"
-                      },
-                      {
-                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][2]"
                       }
                     ]
                   }
@@ -202,7 +191,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/face-recognition-add-face/v1/1703183342491-2023-12-21T18:29:02.491Z/face-recognition-add-face.zip"
+                "S3Key": "serverless/face-recognition-add-face/v1/1703418027243-2023-12-24T11:40:27.243Z/face-recognition-add-face.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
@@ -220,14 +209,14 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersion7LPx8hoknK2I8wqQoMFGm6WQslabIivBChli9XbiZ2o": {
+          "MainLambdaVersionoNLkTWUfjms68x7LOLmyoAY2mbSIF2y8F8qHKU2MSY4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "MainLambdaFunction"
               },
-              "CodeSha256": "Gb/rPhg7ntA+dF1NthcATrx7T0o+g/flrwHYoCRlhuk="
+              "CodeSha256": "Jh0tp8DyucXMkognDIr5iIDbwkppGOmElkaoD9+8Xl8="
             }
           },
           "S3BucketFacerecognitionbbeetech": {
@@ -293,7 +282,7 @@
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersion7LPx8hoknK2I8wqQoMFGm6WQslabIivBChli9XbiZ2o"
+              "Ref": "MainLambdaVersionoNLkTWUfjms68x7LOLmyoAY2mbSIF2y8F8qHKU2MSY4"
             },
             "Export": {
               "Name": "sls-face-recognition-add-face-v1-MainLambdaFunctionQualifiedArn"
@@ -403,7 +392,7 @@
         "timeout": 6,
         "runtime": "go1.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersion7LPx8hoknK2I8wqQoMFGm6WQslabIivBChli9XbiZ2o"
+        "versionLogicalId": "MainLambdaVersionoNLkTWUfjms68x7LOLmyoAY2mbSIF2y8F8qHKU2MSY4"
       }
     },
     "configValidationMode": "warn",
@@ -422,7 +411,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/face-recognition-add-face/v1/code-artifacts",
         "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/add-face/.serverless/face-recognition-add-face.zip",
-        "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703183342491-2023-12-21T18:29:02.491Z"
+        "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703418027243-2023-12-24T11:40:27.243Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -433,7 +422,7 @@
     "artifact": "/Users/kyle/Documents/github/real/go-face-rekognition/add-face/.serverless/face-recognition-add-face.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703183342491-2023-12-21T18:29:02.491Z",
+    "artifactDirectoryName": "serverless/face-recognition-add-face/v1/1703418027243-2023-12-24T11:40:27.243Z",
     "artifact": "face-recognition-add-face.zip"
   }
 }
