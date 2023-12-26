@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
+	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -11,24 +14,62 @@ import (
 	"github.com/aws/aws-sdk-go/service/rekognition"
 )
 
-func handler(ctx context.Context, s3Event events.S3Event) {
+const collectionID = "customers"
+
+type RecognitionResult struct {
+	UniqueID    string                   `json:"uniqueID"`
+	UserMatches []map[string]interface{} `json:"userMatches"`
+}
+
+func handler(ctx context.Context, s3Event events.S3Event) error {
 	sess := session.Must(session.NewSession())
 
-	// Iterate over each S3 event
 	for _, record := range s3Event.Records {
 		s3 := record.S3
 		key := s3.Object.Key
 		bucket := s3.Bucket.Name
+		uniqueID := strings.TrimSuffix(key, filepath.Ext(key))
 
-		// Search for users using the image
-		searchUsersByImage(sess, bucket, key)
+		userMatches, err := searchUsersByImage(sess, bucket, key)
+		if err != nil {
+			log.Printf("Error searching for users by image: %v", err)
+			continue
+		}
+
+		var userMatchesExtract []map[string]interface{}
+
+		for _, match := range userMatches {
+			userID := *match.User.UserId
+			similarity := *match.Similarity
+
+			// Create a map with user information
+			userInfo := map[string]interface{}{
+				"userID":     userID,
+				"similarity": similarity,
+			}
+			userMatchesExtract = append(userMatchesExtract, userInfo)
+		}
+
+		result := RecognitionResult{
+			UniqueID:    uniqueID,
+			UserMatches: userMatchesExtract,
+		}
+
+		responseData, err := json.Marshal(result)
+		if err != nil {
+			log.Printf("Error marshaling data to JSON: %v", err)
+			return err
+		}
+
+		log.Printf("Print response data %v", responseData)
 	}
+
+	return nil
 }
 
-func searchUsersByImage(sess *session.Session, bucket, key string) {
+func searchUsersByImage(sess *session.Session, bucket, key string) ([]*rekognition.UserMatch, error) {
 	svc := rekognition.New(sess)
 
-	collectionID := "customers"
 	input := &rekognition.SearchUsersByImageInput{
 		CollectionId: aws.String(collectionID),
 		Image: &rekognition.Image{
@@ -42,16 +83,10 @@ func searchUsersByImage(sess *session.Session, bucket, key string) {
 
 	result, err := svc.SearchUsersByImage(input)
 	if err != nil {
-		log.Printf("Error searching for users by image :>> %v", err)
-		return
+		return nil, err
 	}
 
-	log.Printf("Found %d user matches 🧐:", len(result.UserMatches))
-	for _, match := range result.UserMatches {
-		userID := *match.User.UserId
-		similarity := *match.Similarity
-		log.Printf("- User ID: %s (Similarity: %.2f%%)", userID, similarity)
-	}
+	return result.UserMatches, nil
 }
 
 func main() {

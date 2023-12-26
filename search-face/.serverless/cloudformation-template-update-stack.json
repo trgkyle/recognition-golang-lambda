@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-search-face/v1/1703422426329-2023-12-24T12:53:46.329Z/face-recognition-search-face.zip"
+          "S3Key": "serverless/face-recognition-search-face/v1/1703597172985-2023-12-26T13:26:12.985Z/face-recognition-search-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
@@ -182,14 +182,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersiongc7aLpTr2NF56y5z23rOldw0frvsXIXCbPvdJQPzMg": {
+    "MainLambdaVersionVtV8c8h661FFUrPA045dcWROm4B0EX1P4kH0PG5C4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "1p//sXB4bL+HfbuE3E0j69XOoekLxwiVGRW+P5f5u4Y="
+        "CodeSha256": "6N0s37Qt5SdGQmz02vpAUBwrvQnijbigzZJHd5ShEg4="
       }
     },
     "S3BucketTransactionbbeetech": {
@@ -255,7 +255,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersiongc7aLpTr2NF56y5z23rOldw0frvsXIXCbPvdJQPzMg"
+        "Ref": "MainLambdaVersionVtV8c8h661FFUrPA045dcWROm4B0EX1P4kH0PG5C4"
       },
       "Export": {
         "Name": "sls-face-recognition-search-face-v1-MainLambdaFunctionQualifiedArn"
