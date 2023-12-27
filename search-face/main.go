@@ -58,8 +58,6 @@ func handler(ctx context.Context, s3Event events.S3Event) error {
 			UserMatches: userMatchesExtract,
 		}
 
-		log.Printf("Recognition result: %v", result)
-
 		sendMessageToConnection(sess, result)
 	}
 

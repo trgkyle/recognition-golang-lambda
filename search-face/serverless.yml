@@ -21,6 +21,10 @@ provider:
           Action:
             - dynamodb:Scan
           Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/WebsocketAPIConnections"
+        - Effect: "Allow"
+          Action:
+            - "execute-api:ManageConnections"
+          Resource: "*"
 package:
   exclude:
     - ./**

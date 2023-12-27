@@ -155,6 +155,13 @@
                     "dynamodb:Scan"
                   ],
                   "Resource": "arn:aws:dynamodb:ap-southeast-1:*:table/WebsocketAPIConnections"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "execute-api:ManageConnections"
+                  ],
+                  "Resource": "*"
                 }
               ]
             }
@@ -171,7 +178,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/face-recognition-search-face/v1/1703651555956-2023-12-27T04:32:35.956Z/face-recognition-search-face.zip"
+          "S3Key": "serverless/face-recognition-search-face/v1/1703653116624-2023-12-27T04:58:36.624Z/face-recognition-search-face.zip"
         },
         "Handler": "bin/main",
         "Runtime": "go1.x",
@@ -189,14 +196,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersion2WPrYIiKhk6rZKkpu1USoB9lRQVJvhethhNEnJ5YoNc": {
+    "MainLambdaVersionZpzloghPLquKP6ZrSzWGCBy5fYuUZC3hGY1vObCIOF0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "OPPl9RjVEwx5VGLs1UXzhqIZA9Ky3iq0oByhEJP/GE0="
+        "CodeSha256": "tOxiVcdpRTjeaEKbgiE2I6dITJxkT8jKsynDkHwjpjI="
       }
     },
     "S3BucketTransactionbbeetech": {
@@ -262,7 +269,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersion2WPrYIiKhk6rZKkpu1USoB9lRQVJvhethhNEnJ5YoNc"
+        "Ref": "MainLambdaVersionZpzloghPLquKP6ZrSzWGCBy5fYuUZC3hGY1vObCIOF0"
       },
       "Export": {
         "Name": "sls-face-recognition-search-face-v1-MainLambdaFunctionQualifiedArn"
