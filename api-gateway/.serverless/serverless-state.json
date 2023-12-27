@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "face-recognition-search-face",
+    "service": "face-recognition-api-gateway",
     "serviceObject": {
-      "name": "face-recognition-search-face"
+      "name": "face-recognition-api-gateway"
     },
     "provider": {
       "name": "aws",
@@ -11,26 +11,20 @@
       "stage": "v1",
       "iam": {
         "role": {
-          "name": "face-recognition-search-face-role",
+          "name": "face-recognition-api-gateway-role",
           "statements": [
             {
               "Effect": "Allow",
               "Action": [
-                "rekognition:SearchUsersByImage"
+                "execute-api:ManageConnections"
               ],
               "Resource": "*"
             },
             {
               "Effect": "Allow",
               "Action": [
-                "s3:GetObject"
-              ],
-              "Resource": "arn:aws:s3:::transaction-bbeetech/*"
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:Scan"
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem"
               ],
               "Resource": "arn:aws:dynamodb:ap-southeast-1:*:table/WebsocketAPIConnections"
             }
@@ -114,7 +108,7 @@
           "MainLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/face-recognition-search-face-v1-main"
+              "LogGroupName": "/aws/lambda/face-recognition-api-gateway-v1-main"
             }
           },
           "IamRoleLambdaExecution": {
@@ -142,7 +136,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "face-recognition-search-face",
+                        "face-recognition-api-gateway",
                         "v1",
                         "lambda"
                       ]
@@ -160,7 +154,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-search-face-v1*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-api-gateway-v1*:*"
                           }
                         ]
                       },
@@ -171,7 +165,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-search-face-v1*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/face-recognition-api-gateway-v1*:*:*"
                           }
                         ]
                       },
@@ -182,14 +176,22 @@
                         "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][1]"
                       },
                       {
-                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][2]"
+                        "Effect": "Allow",
+                        "Action": [
+                          "execute-api:ManageConnections"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:execute-api:*:*:*/@connections/*"
+                          }
+                        ]
                       }
                     ]
                   }
                 }
               ],
               "Path": "/",
-              "RoleName": "face-recognition-search-face-role"
+              "RoleName": "face-recognition-api-gateway-role"
             }
           },
           "MainLambdaFunction": {
@@ -199,11 +201,11 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/face-recognition-search-face/v1/1703651555956-2023-12-27T04:32:35.956Z/face-recognition-search-face.zip"
+                "S3Key": "serverless/face-recognition-api-gateway/v1/1703652349118-2023-12-27T04:45:49.118Z/face-recognition-api-gateway.zip"
               },
               "Handler": "bin/main",
               "Runtime": "go1.x",
-              "FunctionName": "face-recognition-search-face-v1-main",
+              "FunctionName": "face-recognition-api-gateway-v1-main",
               "MemorySize": 1024,
               "Timeout": 6,
               "Role": {
@@ -217,40 +219,63 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersion2WPrYIiKhk6rZKkpu1USoB9lRQVJvhethhNEnJ5YoNc": {
+          "MainLambdaVersionz44ekJqfzJAbqOcRQ3nLkdjXaSEbZJgjmevf2YYl4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "MainLambdaFunction"
               },
-              "CodeSha256": "OPPl9RjVEwx5VGLs1UXzhqIZA9Ky3iq0oByhEJP/GE0="
+              "CodeSha256": "OOF1NC8Q8xvPYGlzBNmsHDB5AdXcMmDb6gDQPtHQqq0="
             }
           },
-          "S3BucketTransactionbbeetech": {
-            "Type": "AWS::S3::Bucket",
+          "WebsocketsApi": {
+            "Type": "AWS::ApiGatewayV2::Api",
             "Properties": {
-              "BucketName": "transaction-bbeetech",
-              "NotificationConfiguration": {
-                "LambdaConfigurations": [
-                  {
-                    "Event": "s3:ObjectCreated:*",
-                    "Function": {
+              "Name": "v1-face-recognition-api-gateway-websockets",
+              "RouteSelectionExpression": "$request.body.action",
+              "Description": "Serverless Websockets",
+              "ProtocolType": "WEBSOCKET"
+            }
+          },
+          "MainWebsocketsIntegration": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "WebsocketsApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
                       "Fn::GetAtt": [
                         "MainLambdaFunction",
                         "Arn"
                       ]
-                    }
-                  }
+                    },
+                    "/invocations"
+                  ]
                 ]
               }
-            },
-            "DependsOn": [
-              "MainLambdaPermissionTransactionbbeetechS3"
-            ]
+            }
           },
-          "MainLambdaPermissionTransactionbbeetechS3": {
+          "MainLambdaPermissionWebsockets": {
             "Type": "AWS::Lambda::Permission",
+            "DependsOn": [
+              "WebsocketsApi",
+              "MainLambdaFunction"
+            ],
             "Properties": {
               "FunctionName": {
                 "Fn::GetAtt": [
@@ -259,22 +284,98 @@
                 ]
               },
               "Action": "lambda:InvokeFunction",
-              "Principal": "s3.amazonaws.com",
-              "SourceArn": {
+              "Principal": "apigateway.amazonaws.com"
+            }
+          },
+          "SconnectWebsocketsRoute": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "WebsocketsApi"
+              },
+              "RouteKey": "$connect",
+              "AuthorizationType": "NONE",
+              "Target": {
                 "Fn::Join": [
-                  "",
+                  "/",
                   [
-                    "arn:",
+                    "integrations",
                     {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":s3:::transaction-bbeetech"
+                      "Ref": "MainWebsocketsIntegration"
+                    }
                   ]
                 ]
-              },
-              "SourceAccount": {
-                "Ref": "AWS::AccountId"
               }
+            }
+          },
+          "SdisconnectWebsocketsRoute": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "WebsocketsApi"
+              },
+              "RouteKey": "$disconnect",
+              "AuthorizationType": "NONE",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "MainWebsocketsIntegration"
+                    }
+                  ]
+                ]
+              }
+            }
+          },
+          "WebsocketsDeploymentStage": {
+            "Type": "AWS::ApiGatewayV2::Stage",
+            "Properties": {
+              "ApiId": {
+                "Ref": "WebsocketsApi"
+              },
+              "StageName": "v1",
+              "Description": "Serverless Websockets",
+              "DeploymentId": {
+                "Ref": "WebsocketsDeploymentydQDVJD15CgZNqTpZQhP2neESUTqnIWwTXgzzDWBN0"
+              }
+            }
+          },
+          "WebsocketsDeploymentydQDVJD15CgZNqTpZQhP2neESUTqnIWwTXgzzDWBN0": {
+            "Type": "AWS::ApiGatewayV2::Deployment",
+            "DependsOn": [
+              "SconnectWebsocketsRoute",
+              "SdisconnectWebsocketsRoute"
+            ],
+            "Properties": {
+              "ApiId": {
+                "Ref": "WebsocketsApi"
+              },
+              "Description": "Serverless Websockets"
+            }
+          },
+          "WebsocketAPIConnections": {
+            "Type": "AWS::DynamoDB::Table",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "connectionId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "connectionId",
+                  "KeyType": "HASH"
+                }
+              ],
+              "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+              },
+              "TableName": "WebsocketAPIConnections"
             }
           }
         },
@@ -284,16 +385,42 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-face-recognition-search-face-v1-ServerlessDeploymentBucketName"
+              "Name": "sls-face-recognition-api-gateway-v1-ServerlessDeploymentBucketName"
             }
           },
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersion2WPrYIiKhk6rZKkpu1USoB9lRQVJvhethhNEnJ5YoNc"
+              "Ref": "MainLambdaVersionz44ekJqfzJAbqOcRQ3nLkdjXaSEbZJgjmevf2YYl4"
             },
             "Export": {
-              "Name": "sls-face-recognition-search-face-v1-MainLambdaFunctionQualifiedArn"
+              "Name": "sls-face-recognition-api-gateway-v1-MainLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpointWebsocket": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "wss://",
+                  {
+                    "Ref": "WebsocketsApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/v1"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-face-recognition-api-gateway-v1-ServiceEndpointWebsocket"
             }
           }
         }
@@ -388,25 +515,57 @@
         "handler": "bin/main",
         "events": [
           {
-            "s3": {
-              "bucket": "transaction-bbeetech",
-              "event": "s3:ObjectCreated:*"
+            "websocket": {
+              "route": "$connect"
+            }
+          },
+          {
+            "websocket": {
+              "route": "$disconnect"
             }
           }
         ],
-        "name": "face-recognition-search-face-v1-main",
+        "name": "face-recognition-api-gateway-v1-main",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "go1.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersion2WPrYIiKhk6rZKkpu1USoB9lRQVJvhethhNEnJ5YoNc"
+        "versionLogicalId": "MainLambdaVersionz44ekJqfzJAbqOcRQ3nLkdjXaSEbZJgjmevf2YYl4"
       }
+    },
+    "resources": {
+      "Resources": {
+        "WebsocketAPIConnections": {
+          "Type": "AWS::DynamoDB::Table",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "connectionId",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "connectionId",
+                "KeyType": "HASH"
+              }
+            ],
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 1,
+              "WriteCapacityUnits": 1
+            },
+            "TableName": "WebsocketAPIConnections"
+          }
+        }
+      },
+      "Outputs": {}
     },
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
     "initialServerlessConfig": {
-      "service": "face-recognition-search-face",
+      "service": "face-recognition-api-gateway",
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
       },
@@ -417,20 +576,23 @@
         "include": [
           "./bin/**"
         ],
-        "artifactsS3KeyDirname": "serverless/face-recognition-search-face/v1/code-artifacts",
-        "artifact": "/Users/kyle/Documents/github/real/recognition-golang-lambda/search-face/.serverless/face-recognition-search-face.zip",
-        "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703651555956-2023-12-27T04:32:35.956Z"
+        "artifactsS3KeyDirname": "serverless/face-recognition-api-gateway/v1/code-artifacts",
+        "artifact": "/Users/kyle/Documents/github/real/recognition-golang-lambda/api-gateway/.serverless/face-recognition-api-gateway.zip",
+        "artifactDirectoryName": "serverless/face-recognition-api-gateway/v1/1703652349118-2023-12-27T04:45:49.118Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "resources": {
+        "$ref": "$[\"service\"][\"resources\"]"
       }
     },
     "layers": {},
     "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/Users/kyle/Documents/github/real/recognition-golang-lambda/search-face/.serverless/face-recognition-search-face.zip"
+    "artifact": "/Users/kyle/Documents/github/real/recognition-golang-lambda/api-gateway/.serverless/face-recognition-api-gateway.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/face-recognition-search-face/v1/1703651555956-2023-12-27T04:32:35.956Z",
-    "artifact": "face-recognition-search-face.zip"
+    "artifactDirectoryName": "serverless/face-recognition-api-gateway/v1/1703652349118-2023-12-27T04:45:49.118Z",
+    "artifact": "face-recognition-api-gateway.zip"
   }
 }

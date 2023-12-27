@@ -1,0 +1,52 @@
+service: face-recognition-api-gateway
+
+provider:
+  name: aws
+  region: ap-southeast-1
+  runtime: go1.x
+  stage: v1
+  iam:
+    role:
+      name: face-recognition-api-gateway-role
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "execute-api:ManageConnections"
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:PutItem"
+            - "dynamodb:DeleteItem"
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/WebsocketAPIConnections"
+
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+functions:
+  main:
+    handler: bin/main
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+
+resources:
+  Resources:
+    WebsocketAPIConnections:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: WebsocketAPIConnections

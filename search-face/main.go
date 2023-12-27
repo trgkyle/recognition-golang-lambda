@@ -11,6 +11,9 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/apigatewaymanagementapi"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/rekognition"
 )
 
@@ -55,13 +58,9 @@ func handler(ctx context.Context, s3Event events.S3Event) error {
 			UserMatches: userMatchesExtract,
 		}
 
-		responseData, err := json.Marshal(result)
-		if err != nil {
-			log.Printf("Error marshaling data to JSON: %v", err)
-			return err
-		}
+		log.Printf("Recognition result: %v", result)
 
-		log.Printf("Print response data %v", responseData)
+		sendMessageToConnection(sess, result)
 	}
 
 	return nil
@@ -89,6 +88,55 @@ func searchUsersByImage(sess *session.Session, bucket, key string) ([]*rekogniti
 	return result.UserMatches, nil
 }
 
+type ConnectionItem struct {
+	ConnectionID string `json:"connectionId"`
+}
+
+func sendMessageToConnection(sess *session.Session, recognitionResult RecognitionResult) error {
+	endpoint := "https://k5nbcqn768.execute-api.ap-southeast-1.amazonaws.com/v1/"
+	apigatewaymanagementapiSvc := apigatewaymanagementapi.New(sess, aws.NewConfig().WithEndpoint(endpoint))
+	recognitionResultJSON, _ := json.Marshal(recognitionResult)
+
+	// Create a DynamoDB session
+	dynamoSess := session.Must(session.NewSession())
+	dynamoSvc := dynamodb.New(dynamoSess)
+
+	// Define the input for the Scan operation on the DynamoDB table
+	scanInput := &dynamodb.ScanInput{
+		TableName: aws.String("WebsocketAPIConnections"),
+	}
+
+	// Perform the Scan operation
+	scanOutput, err := dynamoSvc.Scan(scanInput)
+	if err != nil {
+		log.Printf("Error scanning DynamoDB: %v", err)
+		return err
+	}
+
+	// Iterate over each item (connection) in the DynamoDB table
+	for _, item := range scanOutput.Items {
+		connectionItem := ConnectionItem{}
+		err = dynamodbattribute.UnmarshalMap(item, &connectionItem)
+		if err != nil {
+			log.Printf("Error unmarshalling item from DynamoDB: %v", err)
+			continue
+		}
+
+		// Send the message to the connection
+		input := &apigatewaymanagementapi.PostToConnectionInput{
+			ConnectionId: aws.String(connectionItem.ConnectionID),
+			Data:         recognitionResultJSON,
+		}
+
+		_, err = apigatewaymanagementapiSvc.PostToConnection(input)
+		if err != nil {
+			log.Printf("Error posting to connection: %v", err)
+			continue
+		}
+	}
+
+	return nil
+}
 func main() {
 	lambda.Start(handler)
 }

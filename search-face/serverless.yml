@@ -17,6 +17,10 @@ provider:
           Action:
             - s3:GetObject
           Resource: "arn:aws:s3:::transaction-bbeetech/*"
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Scan
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/WebsocketAPIConnections"
 package:
   exclude:
     - ./**
